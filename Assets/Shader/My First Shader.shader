@@ -1,3 +1,5 @@
+// Upgrade NOTE: replaced 'mul(UNITY_MATRIX_MVP,*)' with 'UnityObjectToClipPos(*)'
+
 Shader "Custom/My First Shader" {
 
     SubShader{
@@ -10,8 +12,8 @@ Shader "Custom/My First Shader" {
 
             #include "UnityCG.cginc"
 
-            float4 MyVertexProgram() : SV_POSITION{
-                return 0;
+            float4 MyVertexProgram(float4 position : POSITION) : SV_POSITION{
+                return UnityObjectToClipPos(position);
             }
 
             float4 MyFragmentProgram(
