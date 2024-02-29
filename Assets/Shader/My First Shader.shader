@@ -18,14 +18,19 @@ Shader "Custom/My First Shader" {
 
             float4 _Tint;
 
-            float4 MyVertexProgram(float4 position : POSITION) : SV_POSITION{
+            float4 MyVertexProgram(
+                float4 position : POSITION,
+                out float3 localPosition : TEXCOORD0
+            ) : SV_POSITION{
+                localPosition = position.xyz;
                 return UnityObjectToClipPos(position);
             }
 
             float4 MyFragmentProgram(
-                float4 position : SV_POSITION
+                float4 position : SV_POSITION,
+                float3 localPosition : TEXCOORD0
             ) : SV_TARGET{
-                return _Tint;
+                return float4(localPosition, 1);
             }
 
             ENDCG
