@@ -28,6 +28,7 @@ Shader "Custom/Texture Splatting" {
             struct Interpolators{
                 float4 position : SV_POSITION;
                 float2 uv : TEXCOORD0;
+                float2 uvSplat : TEXCOORD1;
             };
 
             struct VertexData{
@@ -39,13 +40,15 @@ Shader "Custom/Texture Splatting" {
 				Interpolators i;
 				i.position = UnityObjectToClipPos(v.position);
                 i.uv = TRANSFORM_TEX(v.uv, _MainTex);
+                i.uvSplat = v.uv;
 				return i;
 			}
 
 			float4 MyFragmentProgram (Interpolators i) : SV_TARGET {
+                float4 splat = tex2D(_MainTex, i.uvSplat);
                 return
-                    tex2D(_Texture1, i.uv) +
-                    tex2D(_Texture2, i.uv);
+                    tex2D(_Texture1, i.uv) * splat.r +
+                    tex2D(_Texture2, i.uv) * (1 - splat.r);
 			}
 
             ENDCG
