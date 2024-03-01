@@ -6,6 +6,8 @@ Shader "Custom/Texture Splatting" {
 
     Properties{
         _MainTex("Splat Map", 2D) = "white" {}
+        [NoScaleOffset] _Texture1 ("Texture 1", 2D) = "white" {}
+		[NoScaleOffset] _Texture2 ("Texture 2", 2D) = "white" {}
     }
 
     SubShader{
@@ -20,6 +22,8 @@ Shader "Custom/Texture Splatting" {
 
             sampler2D _MainTex;
             float4 _MainTex_ST;
+
+            sampler2D _Texture1, _Texture2;
 
             struct Interpolators{
                 float4 position : SV_POSITION;
@@ -39,7 +43,9 @@ Shader "Custom/Texture Splatting" {
 			}
 
 			float4 MyFragmentProgram (Interpolators i) : SV_TARGET {
-				return tex2D(_MainTex, i.uv);
+                return
+                    tex2D(_Texture1, i.uv) +
+                    tex2D(_Texture2, i.uv);
 			}
 
             ENDCG
