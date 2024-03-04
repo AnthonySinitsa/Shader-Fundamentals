@@ -68,7 +68,7 @@ Shader "Custom/My First Lighting Shader" {
                     _Smoothness * 100
                 );
 
-                return float4(specular, 1);
+                return float4(diffuse + specular, 1);
 			}
 
             ENDCG
