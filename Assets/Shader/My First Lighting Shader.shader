@@ -38,8 +38,8 @@ Shader "Custom/My First Lighting Shader" {
             Interpolators MyVertexProgram (VertexData v) {
 				Interpolators i;
 				i.position = UnityObjectToClipPos(v.position);
+                i.normal = UnityObjectToWorldNormal(v.normal);
                 i.uv = TRANSFORM_TEX(v.uv, _MainTex);
-                i.normal = v.normal;
 				return i;
 			}
 
