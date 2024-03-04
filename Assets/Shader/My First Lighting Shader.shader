@@ -12,6 +12,10 @@ Shader "Custom/My First Lighting Shader" {
     SubShader{
 
         Pass{
+            Tags{
+                "LightMode" = "ForwardBase"
+            }
+
             CGPROGRAM
 
             #pragma vertex MyVertexProgram
