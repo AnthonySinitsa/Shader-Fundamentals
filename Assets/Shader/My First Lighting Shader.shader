@@ -60,6 +60,8 @@ Shader "Custom/My First Lighting Shader" {
 
                 float3 lightColor = _LightColor0.rgb;
                 float3 albedo = tex2D(_MainTex, i.uv).rgb * _Tint.rgb;
+                albedo *= 1 - _SpecularTint.rgb;
+                
                 float3 diffuse =
                     albedo * lightColor * DotClamped(lightDir, i.normal);
                 float3 halfVector = normalize(lightDir + viewDir);
