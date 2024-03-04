@@ -44,6 +44,7 @@ Shader "Custom/My First Lighting Shader" {
 			}
 
 			float4 MyFragmentProgram (Interpolators i) : SV_TARGET {
+                i.normal = normalize(i.normal);
                 return float4(i.normal * 0.5 + 0.5, 1);
 			}
 
