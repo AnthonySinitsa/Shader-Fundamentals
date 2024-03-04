@@ -58,7 +58,8 @@ Shader "Custom/My First Lighting Shader" {
                 float3 albedo = tex2D(_MainTex, i.uv).rgb * _Tint.rgb;
                 float3 diffuse =
                     albedo * lightColor * DotClamped(lightDir, i.normal);
-                return float4(diffuse, 1);
+                float3 reflectionDir = reflect(-lightDir, i.normal);
+                return DotClamped(viewDir, reflectionDir);
 			}
 
             ENDCG
