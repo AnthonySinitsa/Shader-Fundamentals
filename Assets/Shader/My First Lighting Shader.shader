@@ -24,6 +24,7 @@ Shader "Custom/My First Lighting Shader" {
             #pragma fragment MyFragmentProgram
 
             #include "UnityStandardBRDF.cginc"
+            #include "UnityStandardUtils.cginc"
 
             float4 _Tint;
             sampler2D _MainTex;
@@ -59,9 +60,12 @@ Shader "Custom/My First Lighting Shader" {
                 float3 viewDir = normalize(_WorldSpaceCameraPos - i.worldPos);
 
                 float3 lightColor = _LightColor0.rgb;
+
                 float3 albedo = tex2D(_MainTex, i.uv).rgb * _Tint.rgb;
-                albedo *= 1 - 
-                    max(_SpecularTint.r, max(_SpecularTint.g, _SpecularTint.b));
+                float oneMinusReflectivity;
+                albedo = EnergyConservationBetweenDiffuseAndSpecular(
+                    albedo, _SpecularTint.rgb, oneMinusReflectivity
+                );
 
                 float3 diffuse =
                     albedo * lightColor * DotClamped(lightDir, i.normal);
