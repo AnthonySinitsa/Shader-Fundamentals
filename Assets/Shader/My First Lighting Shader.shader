@@ -25,5 +25,25 @@ Shader "Custom/My First Lighting Shader" {
 
 			ENDCG
 		}
+
+        Pass {
+			Tags {
+				"LightMode" = "ForwardAdd"
+			}
+
+            Blend One One
+            ZWrite Off
+
+			CGPROGRAM
+
+			#pragma target 3.0
+
+			#pragma vertex MyVertexProgram
+			#pragma fragment MyFragmentProgram
+
+			#include "My Lighting.cginc"
+
+			ENDCG
+		}
 	}
 }
