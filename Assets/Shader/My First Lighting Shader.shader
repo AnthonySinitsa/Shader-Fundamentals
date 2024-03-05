@@ -7,7 +7,7 @@ Shader "Custom/My First Lighting Shader" {
     Properties{
         _Tint("Tint", Color) = (1, 1, 1, 1)
         _MainTex("Albedo", 2D) = "white" {}
-        _SpecularTint("Specular", Color) = (0.5, 0.5, 0.5)
+        [Gamma] _Metallic("Metallic", Range(0, 1)) = 0
         _Smoothness("Smoothness", Range(0, 1)) = 0.5
     }
 
@@ -29,7 +29,7 @@ Shader "Custom/My First Lighting Shader" {
             float4 _Tint;
             sampler2D _MainTex;
             float4 _MainTex_ST;
-            float4 _SpecularTint;
+            float _Metallic;
             float _Smoothness;
 
             struct Interpolators{
@@ -62,15 +62,16 @@ Shader "Custom/My First Lighting Shader" {
                 float3 lightColor = _LightColor0.rgb;
 
                 float3 albedo = tex2D(_MainTex, i.uv).rgb * _Tint.rgb;
+                float3 specularTint;
                 float oneMinusReflectivity;
-                albedo = EnergyConservationBetweenDiffuseAndSpecular(
-                    albedo, _SpecularTint.rgb, oneMinusReflectivity
+                albedo = DiffuseAndSpecularFromMetallic(
+                    albedo, _Metallic, specularTint, oneMinusReflectivity
                 );
 
                 float3 diffuse =
                     albedo * lightColor * DotClamped(lightDir, i.normal);
                 float3 halfVector = normalize(lightDir + viewDir);
-                float3 specular = _SpecularTint.rgb * lightColor * pow(
+                float3 specular = specularTint * lightColor * pow(
                     DotClamped(halfVector, i.normal),
                     _Smoothness * 100
                 );
