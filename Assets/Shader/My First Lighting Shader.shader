@@ -21,8 +21,6 @@ Shader "Custom/My First Lighting Shader" {
 			#pragma vertex MyVertexProgram
 			#pragma fragment MyFragmentProgram
 
-            #define POINT
-
 			#include "My Lighting.cginc"
 
 			ENDCG
@@ -42,6 +40,8 @@ Shader "Custom/My First Lighting Shader" {
 
 			#pragma vertex MyVertexProgram
 			#pragma fragment MyFragmentProgram
+
+            #define POINT
 
 			#include "My Lighting.cginc"
 
