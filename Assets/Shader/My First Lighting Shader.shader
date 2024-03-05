@@ -8,7 +8,7 @@ Shader "Custom/My First Lighting Shader" {
         _Tint("Tint", Color) = (1, 1, 1, 1)
         _MainTex("Albedo", 2D) = "white" {}
         [Gamma] _Metallic("Metallic", Range(0, 1)) = 0
-        _Smoothness("Smoothness", Range(0, 1)) = 0.5
+        _Smoothness("Smoothness", Range(0, 1)) = 0.1
     }
 
     SubShader{
@@ -69,10 +69,19 @@ Shader "Custom/My First Lighting Shader" {
                     albedo, _Metallic, specularTint, oneMinusReflectivity
                 );
 
+                UnityLight light;
+                light.color = lightColor;
+                light.dir = lightDir;
+                light.ndotl = DotClamped(i.normal, lightDir);
+                UnityIndirect indirectLight;
+                indirectLight.diffuse = 0;
+                indirectLight.specular = 0;
+
                 return UNITY_BRDF_PBS(
                     albedo, specularTint,
                     oneMinusReflectivity, _Smoothness,
-                    i.normal, viewDir
+                    i.normal, viewDir,
+                    light, indirectLight
                 );
 			}
 
