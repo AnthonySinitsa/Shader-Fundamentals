@@ -24,6 +24,7 @@ Shader "Custom/My First Lighting Shader" {
             #pragma vertex MyVertexProgram  // Specify the custom vertex program
             #pragma fragment MyFragmentProgram  // Specify the custom fragment program
 
+            #include "My Lighting.cginc"
             #include "UnityPBSLighting.cginc"  // Include Unity's Physically Based Shading lighting model
 
             // Declare shader properties used in the program
