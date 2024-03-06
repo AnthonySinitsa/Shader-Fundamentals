@@ -22,7 +22,25 @@ struct Interpolators {
 	float2 uv : TEXCOORD0;
 	float3 normal : TEXCOORD1;
 	float3 worldPos : TEXCOORD2;
+
+    #if defined(VERTEXLIGHT_ON)
+        float3 vertexLightColor : TEXCOORD3;
+    #endif
 };
+
+void ComputerVertexLightCOlor(inout Interpolators i){
+    #if defined(VERTEXLIGHT_ON)
+        float3 lightPos = float3(
+            unity_4LightPosX0.x, unity_4LightPosX0.x, unity_4LightPosX0.x
+        );
+        float3 lightVec = lightPos - i.worldPos;
+		float3 lightDir = normalize(lightVec);
+		float ndotl = DotClamped(i.normal, lightDir);
+		float attenuation = 1 /
+            (1 + dot(lightVec, lightVec) * unity_4LightPosX0.x);
+        i.vertexLightColor = unity_LightColor[0].rgb * ndotl * attenuation;
+    #endif
+}
 
 Interpolators MyVertexProgram (VertexData v) {
 	Interpolators i;
@@ -30,6 +48,7 @@ Interpolators MyVertexProgram (VertexData v) {
 	i.worldPos = mul(unity_ObjectToWorld, v.position);
 	i.normal = UnityObjectToWorldNormal(v.normal);
 	i.uv = TRANSFORM_TEX(v.uv, _MainTex);
+    ComputerVertexLightCOlor(i);
 	return i;
 }
 
@@ -49,6 +68,17 @@ UnityLight CreateLight (Interpolators i) {
 	return light;
 }
 
+UnityIndirect CreateIndirectLight (Interpolators i) {
+	UnityIndirect indirectLight;
+	indirectLight.diffuse = 0;
+	indirectLight.specular = 0;
+
+	#if defined(VERTEXLIGHT_ON)
+		indirectLight.diffuse = i.vertexLightColor;
+	#endif
+	return indirectLight;
+}
+
 float4 MyFragmentProgram (Interpolators i) : SV_TARGET {
 	i.normal = normalize(i.normal);
 	float3 viewDir = normalize(_WorldSpaceCameraPos - i.worldPos);
@@ -61,15 +91,11 @@ float4 MyFragmentProgram (Interpolators i) : SV_TARGET {
 		albedo, _Metallic, specularTint, oneMinusReflectivity
 	);
 
-	UnityIndirect indirectLight;
-	indirectLight.diffuse = 0;
-	indirectLight.specular = 0;
-
 	return UNITY_BRDF_PBS(
 		albedo, specularTint,
 		oneMinusReflectivity, _Smoothness,
 		i.normal, viewDir,
-		CreateLight(i), indirectLight
+		CreateLight(i), CreateIndirectLight(i)
 	);
 }
 
