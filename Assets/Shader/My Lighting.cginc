@@ -8,6 +8,8 @@ float4 _Tint;
 sampler2D _MainTex;
 float4 _MainTex_ST;
 
+sampler2D _HeightMap;
+
 float _Metallic;
 float _Smoothness;
 
@@ -86,6 +88,7 @@ float4 MyFragmentProgram (Interpolators i) : SV_TARGET {
 	float3 viewDir = normalize(_WorldSpaceCameraPos - i.worldPos);
 
 	float3 albedo = tex2D(_MainTex, i.uv).rgb * _Tint.rgb;
+	albedo *= tex2D(_HeightMap, i.uv);
 
 	float3 specularTint;
 	float oneMinusReflectivity;
