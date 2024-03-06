@@ -23,20 +23,20 @@ struct Interpolators {
 	float3 normal : TEXCOORD1;
 	float3 worldPos : TEXCOORD2;
 
-    #if defined(VERTEXLIGHT_ON)
-        float3 vertexLightColor : TEXCOORD3;
-    #endif
+	#if defined(VERTEXLIGHT_ON)
+		float3 vertexLightColor : TEXCOORD3;
+	#endif
 };
 
-void ComputerVertexLightColor(inout Interpolators i){
-    #if defined(VERTEXLIGHT_ON)
-        i.vertexLightColor = Shade4PointLights(
+void ComputeVertexLightColor (inout Interpolators i) {
+	#if defined(VERTEXLIGHT_ON)
+		i.vertexLightColor = Shade4PointLights(
 			unity_4LightPosX0, unity_4LightPosY0, unity_4LightPosZ0,
 			unity_LightColor[0].rgb, unity_LightColor[1].rgb,
 			unity_LightColor[2].rgb, unity_LightColor[3].rgb,
 			unity_4LightAtten0, i.worldPos, i.normal
 		);
-    #endif
+	#endif
 }
 
 Interpolators MyVertexProgram (VertexData v) {
@@ -45,20 +45,19 @@ Interpolators MyVertexProgram (VertexData v) {
 	i.worldPos = mul(unity_ObjectToWorld, v.position);
 	i.normal = UnityObjectToWorldNormal(v.normal);
 	i.uv = TRANSFORM_TEX(v.uv, _MainTex);
-    ComputerVertexLightColor(i);
+	ComputeVertexLightColor(i);
 	return i;
 }
 
 UnityLight CreateLight (Interpolators i) {
 	UnityLight light;
 
-    #if defined(POINT) || defined(POINT_COOKIE) || defined(SPOT)
-	    light.dir = normalize(_WorldSpaceLightPos0.xyz - i.worldPos);
-    #else
-        light.dir = _WorldSpaceLightPos0.xyz;
-    #endif
-
-    float3 lightVec = _WorldSpaceLightPos0.xyz - i.worldPos;
+	#if defined(POINT) || defined(POINT_COOKIE) || defined(SPOT)
+		light.dir = normalize(_WorldSpaceLightPos0.xyz - i.worldPos);
+	#else
+		light.dir = _WorldSpaceLightPos0.xyz;
+	#endif
+	
 	UNITY_LIGHT_ATTENUATION(attenuation, 0, i.worldPos);
 	light.color = _LightColor0.rgb * attenuation;
 	light.ndotl = DotClamped(i.normal, light.dir);
@@ -74,15 +73,16 @@ UnityIndirect CreateIndirectLight (Interpolators i) {
 		indirectLight.diffuse = i.vertexLightColor;
 	#endif
 
-    #if defined(FORWARD_BASE_PASS)
-        indirectLight.diffuse += max(0, ShadeSH9(float4(i.normal, 1)));
-    #endif
+	#if defined(FORWARD_BASE_PASS)
+		indirectLight.diffuse += max(0, ShadeSH9(float4(i.normal, 1)));
+	#endif
 
 	return indirectLight;
 }
 
 float4 MyFragmentProgram (Interpolators i) : SV_TARGET {
 	i.normal = normalize(i.normal);
+
 	float3 viewDir = normalize(_WorldSpaceCameraPos - i.worldPos);
 
 	float3 albedo = tex2D(_MainTex, i.uv).rgb * _Tint.rgb;
