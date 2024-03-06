@@ -38,7 +38,7 @@ Shader "Custom/My First Lighting Shader" {
 
 			#pragma target 3.0
 
-			#pragma multi_compile DIRECTINAL POINT SPOT
+			#pragma multi_compile DIRECTINAL DIRECTIONAL_COOKIE POINT SPOT
 
 			#pragma vertex MyVertexProgram
 			#pragma fragment MyFragmentProgram
