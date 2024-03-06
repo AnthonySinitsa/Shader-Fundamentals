@@ -1,3 +1,5 @@
+﻿// Upgrade NOTE: replaced 'mul(UNITY_MATRIX_MVP,*)' with 'UnityObjectToClipPos(*)'
+
 #if !defined(MY_LIGHTING_INCLUDED)
 #define MY_LIGHTING_INCLUDED
 

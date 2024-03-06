@@ -8,15 +8,16 @@ Material:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: Splats
-  m_Shader: {fileID: 4800000, guid: d177493494093254d9aaecabea8ae047, type: 3}
+  m_Shader: {fileID: 4800000, guid: 9c17e8e51caec46ca9fb36ace9d9f91f, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords: []
-  m_InvalidKeywords: []
-  m_LightmapFlags: 4
+  m_InvalidKeywords:
+  - _EMISSION
+  m_LightmapFlags: 1
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
-  m_CustomRenderQueue: -1
+  m_CustomRenderQueue: 2000
   stringTagMap: {}
   disabledShaderPasses: []
   m_LockedProperties: 
@@ -96,4 +97,6 @@ Material:
     m_Colors:
     - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
+    - _Tiling: {r: 5, g: 5, b: 0, a: 0}
+    - _TilingOffset: {r: 1, g: 1, b: 0, a: 0}
   m_BuildTextureStacks: []
