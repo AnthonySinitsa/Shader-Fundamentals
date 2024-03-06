@@ -28,17 +28,14 @@ struct Interpolators {
     #endif
 };
 
-void ComputerVertexLightCOlor(inout Interpolators i){
+void ComputerVertexLightColor(inout Interpolators i){
     #if defined(VERTEXLIGHT_ON)
-        float3 lightPos = float3(
-            unity_4LightPosX0.x, unity_4LightPosX0.x, unity_4LightPosX0.x
-        );
-        float3 lightVec = lightPos - i.worldPos;
-		float3 lightDir = normalize(lightVec);
-		float ndotl = DotClamped(i.normal, lightDir);
-		float attenuation = 1 /
-            (1 + dot(lightVec, lightVec) * unity_4LightPosX0.x);
-        i.vertexLightColor = unity_LightColor[0].rgb * ndotl * attenuation;
+        i.vertexLightColor = Shade4PointLights(
+			unity_4LightPosX0, unity_4LightPosY0, unity_4LightPosZ0,
+			unity_LightColor[0].rgb, unity_LightColor[1].rgb,
+			unity_LightColor[2].rgb, unity_LightColor[3].rgb,
+			unity_4LightAtten0, i.worldPos, i.normal
+		);
     #endif
 }
 
@@ -48,7 +45,7 @@ Interpolators MyVertexProgram (VertexData v) {
 	i.worldPos = mul(unity_ObjectToWorld, v.position);
 	i.normal = UnityObjectToWorldNormal(v.normal);
 	i.uv = TRANSFORM_TEX(v.uv, _MainTex);
-    ComputerVertexLightCOlor(i);
+    ComputerVertexLightColor(i);
 	return i;
 }
 
