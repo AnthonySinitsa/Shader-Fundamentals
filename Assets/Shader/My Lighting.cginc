@@ -9,6 +9,7 @@ sampler2D _MainTex;
 float4 _MainTex_ST;
 
 sampler2D _HeightMap;
+float4 _HeightMap_TexelSize;
 
 float _Metallic;
 float _Smoothness;
@@ -83,8 +84,11 @@ UnityIndirect CreateIndirectLight (Interpolators i) {
 }
 
 void InitializeFragmentNormal(inout Interpolators i){
-    float h = tex2D(_HeightMap, i.uv);
-    i.normal = float3(0, h, 0);
+    float2 delta = float2(_HeightMap_TexelSize.x, 0);
+    float h1 = tex2D(_HeightMap, i.uv);
+    float h2 = tex2D(_HeightMap, i.uv + delta);
+    i.normal = float3(h2 - h1, 1, 0);
+
 	i.normal = normalize(i.normal);
 }
 
