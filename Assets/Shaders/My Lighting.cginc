@@ -1,3 +1,5 @@
+﻿// Upgrade NOTE: replaced 'mul(UNITY_MATRIX_MVP,*)' with 'UnityObjectToClipPos(*)'
+
 #if !defined(MY_LIGHTING_INCLUDED)
 #define MY_LIGHTING_INCLUDED
 
@@ -7,6 +9,9 @@
 float4 _Tint;
 sampler2D _MainTex;
 float4 _MainTex_ST;
+
+sampler2D _NormalMap;
+float _BumpScale;
 
 float _Metallic;
 float _Smoothness;
@@ -80,8 +85,14 @@ UnityIndirect CreateIndirectLight (Interpolators i) {
 	return indirectLight;
 }
 
+void InitializeFragmentNormal(inout Interpolators i) {
+    i.normal = UnpackScaleNormal(tex2D(_NormalMap, i.uv), _BumpScale);
+	i.normal = i.normal.xzy;
+    i.normal = normalize(i.normal);
+}
+
 float4 MyFragmentProgram (Interpolators i) : SV_TARGET {
-	i.normal = normalize(i.normal);
+	InitializeFragmentNormal(i);
 
 	float3 viewDir = normalize(_WorldSpaceCameraPos - i.worldPos);
 
