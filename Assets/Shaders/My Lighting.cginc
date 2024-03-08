@@ -10,8 +10,8 @@ float4 _Tint;
 sampler2D _MainTex, _DetailTex;
 float4 _MainTex_ST, _DetailTex_ST;
 
-sampler2D _NormalMap;
-float _BumpScale;
+sampler2D _NormalMap, _DetailNormalMap;
+float _BumpScale, _DetailBumpScale;
 
 float _Metallic;
 float _Smoothness;
@@ -88,6 +88,8 @@ UnityIndirect CreateIndirectLight (Interpolators i) {
 
 void InitializeFragmentNormal(inout Interpolators i) {
     i.normal = UnpackScaleNormal(tex2D(_NormalMap, i.uv.xy), _BumpScale);
+    i.normal =
+        UnpackScaleNormal(tex2D(_DetailNormalMap, i.uv.zw), _DetailBumpScale);
 	i.normal = i.normal.xzy;
     i.normal = normalize(i.normal);
 }
