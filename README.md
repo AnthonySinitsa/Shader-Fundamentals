@@ -1,4 +1,10 @@
 # Normal-Mapping/Shader-Fundamentals
+
+<div align="center">
+  <img src="ball.gif" alt="rotating detailed ball">
+</div>
+
+#
  
 The primary focus of this project is the; My First Lighting Shader.shader and My Lighting.cginc. 
 
@@ -32,7 +38,3 @@ In context of the shader files, the key aspects related to normal mapping are th
     - The modified normal, along with other shading properties like albedo, metallic, and smoothness, affects the final appearance of the surface.
 
 In summary, normal mapping is a technique that allows developers to simulate surface details on 3D models without increasing the model's geometric complexity.
-
-<div align="center">
-  <img src="ball.gif" alt="rotating detailed ball">
-</div>
