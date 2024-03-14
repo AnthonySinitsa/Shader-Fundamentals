@@ -7,10 +7,12 @@
 
 struct VertexData {
 	float4 position : POSITION;
+    float3 normal : NORMAL;
 };
 
 float4 MyShadowVertexProgram (VertexData v) : SV_POSITION {
-	return UnityObjectToClipPos(v.position);
+    float4 position = UnityClipSpaceShadowCasterPos(v.position.xyz, v.normal);
+	return UnityApplyLinearShadowBias(position);
 }
 
 half4 MyShadowFragmentProgram () : SV_TARGET {
