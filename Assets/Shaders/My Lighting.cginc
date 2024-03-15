@@ -37,8 +37,12 @@ struct Interpolators {
 
 	float3 worldPos : TEXCOORD4;
 
+    #if defined(SHADOWS_SCREEN)
+        float4 shadowCoordinates : TEXCOORD5;
+    #endif
+
 	#if defined(VERTEXLIGHT_ON)
-		float3 vertexLightColor : TEXCOORD5;
+		float3 vertexLightColor : TEXCOORD6;
 	#endif
 };
 
@@ -73,6 +77,13 @@ Interpolators MyVertexProgram (VertexData v) {
 		
 	i.uv.xy = TRANSFORM_TEX(v.uv, _MainTex);
 	i.uv.zw = TRANSFORM_TEX(v.uv, _DetailTex);
+
+    #if defined(SHADOWS_SCREEN)
+        i.shadowCoordinates.xy = 
+            (float2(i.position.x, -i.position.y) + i.position.w) * 0.5;
+        i.shadowCoordinates.zw = i.position.zw;
+    #endif
+
 	ComputeVertexLightColor(i);
 	return i;
 }
@@ -87,7 +98,9 @@ UnityLight CreateLight (Interpolators i) {
 	#endif
 
     #if defined(SHADOWS_SCREEN)
-        float attenuation = 1;
+        float attenuation = tex2D(
+            _ShadowMapTexture, 
+            i.shadowCoordinates.xy / i.shadowCoordinates.w);
     #else 
 	    UNITY_LIGHT_ATTENUATION(attenuation, 0, i.worldPos);
     #endif        
