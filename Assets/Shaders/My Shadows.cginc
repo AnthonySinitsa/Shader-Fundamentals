@@ -1,16 +1,15 @@
-// Upgrade NOTE: replaced 'mul(UNITY_MATRIX_MVP,*)' with 'UnityObjectToClipPos(*)'
-
-#if !defined(MY_SHADOWS_INCLUDED)
+﻿#if !defined(MY_SHADOWS_INCLUDED)
 #define MY_SHADOWS_INCLUDED
 
 #include "UnityCG.cginc"
 
 struct VertexData {
 	float4 position : POSITION;
-    float3 normal : NORMAL;
+	float3 normal : NORMAL;
 };
+
 #if defined(SHADOWS_CUBE)
-    struct Interpolators {
+	struct Interpolators {
 		float4 position : SV_POSITION;
 		float3 lightVec : TEXCOORD0;
 	};
@@ -22,20 +21,22 @@ struct VertexData {
 			mul(unity_ObjectToWorld, v.position).xyz - _LightPositionRange.xyz;
 		return i;
 	}
-	
+
 	float4 MyShadowFragmentProgram (Interpolators i) : SV_TARGET {
-		return 0;
-	}
-#else
-    float4 MyShadowVertexProgram (VertexData v) : SV_POSITION {
-        float depth = length(i.lightVec) + unity_LightShadowBias.x;
+		float depth = length(i.lightVec) + unity_LightShadowBias.x;
 		depth *= _LightPositionRange.w;
 		return UnityEncodeCubeShadowDepth(depth);
-    }
+	}
+#else
+	float4 MyShadowVertexProgram (VertexData v) : SV_POSITION {
+		float4 position =
+			UnityClipSpaceShadowCasterPos(v.position.xyz, v.normal);
+		return UnityApplyLinearShadowBias(position);
+	}
 
-    half4 MyShadowFragmentProgram () : SV_TARGET {
-        return 0;
-    }
+	half4 MyShadowFragmentProgram () : SV_TARGET {
+		return 0;
+	}
 #endif
 
 #endif
